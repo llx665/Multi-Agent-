@@ -1,0 +1,22 @@
+# FastAPI Backend
+# 基于原项目 requirements.txt，避免版本冲突
+
+fastapi==0.115.0
+uvicorn==0.34.0
+python-multipart==0.0.12
+
+pydantic==2.10.6
+pydantic-settings==2.7.1
+
+langchain-core==0.3.66
+langchain-community==0.3.27
+langchain-openai==0.3.9
+langchain-text-splitters==0.3.8
+
+chromadb==0.6.1
+sentence-transformers==3.3.1
+python-dotenv==1.0.1
+loguru==0.7.3
+uuid-utils==0.10.0
+beautifulsoup4==4.12.3
+openpyxl==3.1.5

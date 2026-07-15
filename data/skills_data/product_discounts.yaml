@@ -1,0 +1,122 @@
+# 产品折扣数据
+# 格式：产品关键词 -> {名称, 标价, 最低价}
+
+products:
+  # 智能手机
+  x12 pro:
+    name: "智能手机 X12 Pro"
+    list_price: 3999
+    min_price: 3299
+
+  x12:
+    name: "智能手机 X12"
+    list_price: 2999
+    min_price: 2499
+
+  # 平板电脑
+  airpad:
+    name: "平板电脑 AirPad 2024"
+    list_price: 4999
+    min_price: 4199
+
+  matepad:
+    name: "平板电脑 MatePad Pro"
+    list_price: 3999
+    min_price: 3399
+
+  # 笔记本电脑
+  thinkbook:
+    name: "笔记本电脑 ThinkBook 14"
+    list_price: 6499
+    min_price: 5699
+
+  小新pro:
+    name: "笔记本电脑 小新Pro 16"
+    list_price: 7299
+    min_price: 6199
+
+  拯救者:
+    name: "游戏笔记本电脑 拯救者R9000P"
+    list_price: 11999
+    min_price: 9999
+
+  # 耳机
+  soundpods:
+    name: "无线蓝牙耳机 SoundPods Pro"
+    list_price: 599
+    min_price: 449
+
+  freebuds:
+    name: "无线蓝牙耳机 FreeBuds SE"
+    list_price: 399
+    min_price: 299
+
+  openrun:
+    name: "骨传导耳机 OpenRun Pro"
+    list_price: 1299
+    min_price: 999
+
+  wh-1000xm5:
+    name: "无线降噪耳机 WH-1000XM5"
+    list_price: 2699
+    min_price: 2199
+
+  # 手表
+  watchfit:
+    name: "智能手表 WatchFit 3"
+    list_price: 999
+    min_price: 799
+
+  watch gt:
+    name: "智能手表 Watch GT4"
+    list_price: 1288
+    min_price: 999
+
+  米兔:
+    name: "儿童智能手表 米兔6C"
+    list_price: 599
+    min_price: 459
+
+  # 鼠标
+  g502:
+    name: "无线游戏鼠标 G502 Pro"
+    list_price: 399
+    min_price: 299
+
+  mx master:
+    name: "无线办公鼠标 MX Master 3S"
+    list_price: 899
+    min_price: 699
+
+  # 键盘
+  k380:
+    name: "机械键盘 K380"
+    list_price: 449
+    min_price: 349
+
+  hhkb:
+    name: "机械键盘 HHKB Professional"
+    list_price: 1999
+    min_price: 1699
+
+  # 投影仪
+  minibeam:
+    name: "便携投影仪 MiniBeam"
+    list_price: 2499
+    min_price: 1999
+
+  极米h6:
+    name: "家庭投影仪 极米H6"
+    list_price: 6999
+    min_price: 5699
+
+  # 牙刷
+  欧乐b:
+    name: "电动牙刷 欧乐-B iO9"
+    list_price: 1999
+    min_price: 1499
+
+  飞利浦hx:
+    name: "电动牙刷 飞利浦HX9999"
+    list_price: 1299
+    min_price: 999
