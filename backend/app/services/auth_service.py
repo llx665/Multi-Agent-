@@ -16,6 +16,8 @@ import uuid
 from typing import Any, Dict, Optional, Tuple
 
 import pymysql
+import psycopg2
+import psycopg2.extras
 from app.config import settings
 
 
@@ -58,6 +60,19 @@ class AuthService:
             if not os.path.isabs(raw_path):
                 raw_path = os.path.join(project_root, raw_path)
             os.makedirs(os.path.dirname(raw_path), exist_ok=True)
+        if scheme.startswith("postgresql") or scheme == "postgres":
+            username = urllib.parse.unquote(parsed.username or "")
+            password = urllib.parse.unquote(parsed.password or "")
+            host = parsed.hostname or "localhost"
+            port = parsed.port or 5432
+            database = parsed.path.lstrip("/") if parsed.path else ""
+            return "postgresql", {
+                "user": username, "password": password,
+                "host": host, "port": port,
+                "database": database, "placeholder": "%s",
+            }
+
+
             return "sqlite", {"path": raw_path, "placeholder": "?"}
 
         if scheme.startswith("mysql"):
@@ -87,6 +102,17 @@ class AuthService:
     def _get_connection(self):
         if self._db_type == "sqlite":
             conn = sqlite3.connect(self._db_config["path"], check_same_thread=False)
+        if self._db_type == "postgresql":
+            return psycopg2.connect(
+                host=self._db_config["host"],
+                port=self._db_config["port"],
+                user=self._db_config["user"],
+                password=self._db_config["password"],
+                dbname=self._db_config["database"],
+                cursor_factory=psycopg2.extras.RealDictCursor,
+            )
+
+
             conn.row_factory = sqlite3.Row
             return conn
 
@@ -117,6 +143,45 @@ class AuthService:
                     status VARCHAR(32) NOT NULL DEFAULT 'active',
                     role VARCHAR(32) NOT NULL DEFAULT 'user',
                     last_login_at INTEGER,
+        if target == "postgresql":
+            return """
+                CREATE TABLE IF NOT EXISTS users (
+                    id TEXT PRIMARY KEY,
+                    username TEXT NOT NULL UNIQUE,
+                    password_salt TEXT NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    created_at INTEGER NOT NULL,
+                    status VARCHAR(32) NOT NULL DEFAULT 'active',
+                    role VARCHAR(32) NOT NULL DEFAULT 'user',
+                    last_login_at INTEGER,
+                    password_updated_at INTEGER,
+                    updated_at INTEGER
+                );
+                CREATE TABLE IF NOT EXISTS sessions (
+                    token TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL REFERENCES users(id),
+                    created_at INTEGER NOT NULL,
+                    expires_at INTEGER NOT NULL,
+                    is_active INTEGER NOT NULL DEFAULT 1
+                );
+                CREATE TABLE IF NOT EXISTS refresh_tokens (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL REFERENCES users(id),
+                    token_hash TEXT NOT NULL,
+                    expires_at INTEGER NOT NULL,
+                    created_at INTEGER NOT NULL,
+                    is_revoked INTEGER NOT NULL DEFAULT 0
+                );
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT,
+                    action TEXT NOT NULL,
+                    detail TEXT,
+                    ip_address TEXT,
+                    created_at INTEGER NOT NULL
+                );
+            """
+
                     password_updated_at INTEGER,
                     updated_at INTEGER
                 )
@@ -169,6 +234,13 @@ class AuthService:
                 self._ensure_column(conn, "users", name, ddl)
 
     def _list_columns(self, conn, table_name: str) -> set[str]:
+        if self._db_type == "postgresql":
+            cur = conn.cursor()
+            cur.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = \'"'{table_name}'\'")
+            rows = cur.fetchall()
+            return {row["column_name"] for row in rows}
+
+
         if self._db_type == "sqlite":
             rows = conn.execute(f"PRAGMA table_info({table_name})").fetchall()
             return {row["name"] for row in rows}
