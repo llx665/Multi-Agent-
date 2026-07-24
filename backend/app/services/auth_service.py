@@ -236,7 +236,7 @@ class AuthService:
     def _list_columns(self, conn, table_name: str) -> set[str]:
         if self._db_type == "postgresql":
             cur = conn.cursor()
-            cur.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = \'"'{table_name}'\'")
+            cur.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table_name}'")
             rows = cur.fetchall()
             return {row["column_name"] for row in rows}
 
